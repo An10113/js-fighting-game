@@ -125,6 +125,40 @@ function collision({box1,box2}){
 
 }
 
+function winner({player,enemy,timeID}){
+    clearTimeout(timeID)
+    document.querySelector('.tie').style.display = 'flex'
+    if(player.health === enemy.health){
+        console.log('tie')
+        document.querySelector('.tie').innerHTML = 'Tie'
+    }
+    else if (player.health > enemy.health){
+        document.querySelector('.tie').innerHTML = 'P1 wins'
+    }
+    else if (player.health < enemy.health){
+        document.querySelector('.tie').innerHTML = 'P2 wins'
+    }
+}
+
+
+let time = 60
+let timeID
+function timer(){
+    timeID = setTimeout(timer, 1000);
+    if( time > 0 ){
+        time = time - 1
+        document.querySelector('.timer').innerHTML = time
+    }
+
+
+
+    if(time === 0 ){
+        winner({player,enemy,timeID})
+    }
+}
+
+timer()
+    
 function animation(){
     window.requestAnimationFrame(animation)
     c.fillStyle = 'black'
@@ -176,6 +210,10 @@ function animation(){
             document.querySelector("#playerHealth").style.width = player.health + '%'
         }
 
+        // end game
+        if (enemy.health <= 0 || player.health <= 0){
+            winner({player,enemy,timeID})
+        }
        
 }
 
