@@ -1,6 +1,41 @@
-canvas{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
 }
+
+
+.container{
+    display: inline-block;
+    position: relative;
+}
+.timer{
+    background-color: red;
+    height: 100px;
+    width: 100px;
+    flex-shrink:0 ;
+}
+.small-container{
+    position: absolute;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    padding: 20px
+}
+.health1{
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 4px solid white;
+    border-left: 4px solid white;
+    border-bottom: 4px solid white;
+}
+.health2{
+    position: relative;
+    width: 100%;
+    border-top: 4px solid white;
+    border-right: 4px solid white;
+    border-bottom: 4px solid white;
+}
+

@@ -1,14 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./style.css" />
     <script src="./index.js" defer></script>
-</head>
-<body>
-    <canvas></canvas>
-</body>
+  </head>
+  <body>
+    <div class="container">
+      <div class="small-container">
+        <div class="health1">
+          <div style="background-color: red; height: 30px; width: 100%;"></div>
+          <div
+            id="playerHealth"
+            style="
+              position: absolute;
+              background: #818cf8;
+              top: 0;
+              right: 0;
+              bottom: 0;
+              width: 100%;
+            "
+          ></div>
+        </div>
+        <div class="timer"></div>
+        <div class="health2">
+          <div style="background-color: red; height: 30px;"></div>
+          <div
+            id="enemyHealth"
+            style="
+              position: absolute;
+              background: #818cf8;
+              top: 0;
+              right: 0;
+              bottom: 0;
+              left: 0;
+            "
+          ></div>
+        </div>
+      </div>
+      <canvas></canvas>
+    </div>
+  </body>
 </html>

@@ -25,6 +25,7 @@ class sprite {
             height:50,
         }
         this.color = color
+        this.health = 100
     }
     draw(){
         c.fillStyle = this.color
@@ -160,7 +161,8 @@ function animation(){
         && player.isAttacking
         ){
             player.isAttacking =false
-            console.log('potato')
+            enemy.health -= 20
+            document.querySelector("#enemyHealth").style.width = enemy.health + '%'
         }
     
         if ( collision({
@@ -170,7 +172,8 @@ function animation(){
         && enemy.isAttacking
         ){
             enemy.isAttacking = false
-            console.log('nigga')
+            player.health -= 20
+            document.querySelector("#playerHealth").style.width = player.health + '%'
         }
 
        
