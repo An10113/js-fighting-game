@@ -1,5 +1,5 @@
 class sprite {
-    constructor({position,imageSrc,scale = 1,FramesMax = 1}){
+    constructor({position,imageSrc,scale = 1,FramesMax = 1,offset = {x:0,y:0}}){
         this.position = position
         this.width = 50
         this.height = 200
@@ -9,7 +9,8 @@ class sprite {
         this.FramesMax = FramesMax
         this.Frame = 0
         this.FrameElapsed = 0
-        this.FrameHold = 10
+        this.FrameHold = 7
+        this.offset = offset
     }
     draw(){
         c.drawImage(
@@ -18,17 +19,17 @@ class sprite {
             0,
             this.image.width / this.FramesMax, 
             this.image.height, 
-            this.position.x,
-            this.position.y,
+            this.position.x - this.offset.x,
+            this.position.y - this.offset.y,
             (this.image.width/this.FramesMax) * this.scale,
             this.image.height * this.scale
             )
 
     }
 
-    update(){
-        this.draw()
+    AnimationFrames(){
         this.FrameElapsed++
+    
         if(this.FrameElapsed % this.FrameHold === 0){
             if (this.Frame < this.FramesMax - 1){
                 this.Frame++
@@ -38,11 +39,28 @@ class sprite {
             }
         }
     }
+    update(){
+        this.draw()
+        this.AnimationFrames()
+    }
 }
 
-class Fighter {
-    constructor({position,velocity,color,offset}){
-        this.position = position
+
+class Fighter extends sprite{
+    constructor({
+        position,
+        velocity,
+        color = 'red',
+        imageSrc,
+        scale = 1,
+        FramesMax = 1,
+        offset = {x:0,y:0},
+        sprites
+    })
+        {
+            super({
+                position,FramesMax,scale,imageSrc,offset
+            })
         this.velocity = velocity
         this.width = 50
         this.height = 200
@@ -58,11 +76,29 @@ class Fighter {
         }
         this.color = color
         this.health = 100
+        this.Frame = 0
+        this.FrameElapsed = 0
+        this.FrameHold = 7
+        this.sprites = sprites
+
+        for(sprite in sprites){
+            sprites[sprite].image = new Image()
+            sprites[sprite].image.src = sprites[sprite].imageSrc
+
+        }
     }
     draw(){
-        c.fillStyle = this.color
-        c.fillRect(this.position.x,this.position.y,this.width,this.height)
-
+        c.drawImage(
+            this.image,
+            this.Frame * (this.image.width / this.FramesMax),
+            0,
+            this.image.width / this.FramesMax, 
+            this.image.height, 
+            this.position.x - this.offset.x,
+            this.position.y - this.offset.y,
+            (this.image.width/this.FramesMax) * this.scale,
+            this.image.height * this.scale
+            )
         if(this.isAttacking){
             c.fillStyle = 'green'
             c.fillRect(
@@ -77,6 +113,7 @@ class Fighter {
 
     update(){
         this.draw()
+        this.AnimationFrames()
         this.attackbox.position.x = this.position.x + this.attackbox.offset.x
         this.attackbox.position.y = this.position.y
 

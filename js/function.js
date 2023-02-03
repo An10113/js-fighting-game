@@ -38,3 +38,5 @@ function timer(){
         winner({player,enemy,timeID})
     }
 }
+
+
