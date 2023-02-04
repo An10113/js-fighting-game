@@ -122,10 +122,13 @@ class Fighter extends sprite{
         
         if(this.position.y + this.height + this.velocity.y >= canvas.height - 96){
             this.velocity.y = 0
+            this.position.y = 280
         }
         else{
             this.velocity.y += gravity
         }
+
+
     }
 
     attack(){
@@ -133,6 +136,38 @@ class Fighter extends sprite{
         setTimeout(() => {
             this.isAttacking = false
         },100)
+    }
+
+    switchsprite(sprite){
+        switch(sprite){
+            case 'idle':
+            if(this.image !== this.sprites.idle.image){
+                this.image = this.sprites.idle.image
+                this.FramesMax = this.sprites.idle.FramesMax
+                this.Frame = 0
+            }
+            break
+            case 'run':
+                if(this.image !== this.sprites.run.image){
+                this.image = this.sprites.run.image
+                this.FramesMax = this.sprites.run.FramesMax
+                this.Frame = 0
+            }
+            break
+            case 'jump':
+                if(this.image !== this.sprites.jump.image){
+                this.image = this.sprites.jump.image
+                this.FramesMax = this.sprites.jump.FramesMax
+                this.Frame = 0
+            }
+            case 'jump':
+                if(this.image !== this.sprites.fall.image){
+                this.image = this.sprites.fall.image
+                this.FramesMax = this.sprites.fall.FramesMax
+                this.Frame = 0
+            }
+            break
+        }
     }
 }
 
