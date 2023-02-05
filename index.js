@@ -5,101 +5,145 @@ canvas.width = 1024
 canvas.height = 576
 
 c.fillRect(0,0,canvas.width,canvas.height)
+const gravity = 0.5
 
-const gravity = 0.3
-
-class sprite {
-    constructor({position,velocity,color,offset}){
-        this.position = position
-        this.velocity = velocity
-        this.width = 50
-        this.height = 200
-        this.lastkey
-        this.attackbox = {
-            position:{
-                x:this.position.x,
-                y:this.position.y
-            },
-            offset,
-            width:100,
-            height:50,
-        }
-        this.color = color
-        this.health = 100
-    }
-    draw(){
-        c.fillStyle = this.color
-        c.fillRect(this.position.x,this.position.y,this.width,this.height)
-
-        if(this.isAttacking){
-            c.fillStyle = 'green'
-            c.fillRect(
-                this.attackbox.position.x,
-                this.attackbox.position.y,
-                this.attackbox.width,
-                this.attackbox.height,
-                this.isAttacking
-                )
-            }
-    }
-
-    update(){
-        this.draw()
-        this.attackbox.position.x = this.position.x + this.attackbox.offset.x
-        this.attackbox.position.y = this.position.y
-
-        this.position.x += this.velocity.x
-        this.position.y += this.velocity.y
-        
-        if(this.position.y + this.height + this.velocity.y >= canvas.height){
-            this.velocity.y = 0
-        }
-        else{
-            this.velocity.y += gravity
-        }
-    }
-
-    attack(){
-        this.isAttacking = true
-        setTimeout(() => {
-            this.isAttacking = false
-        },100)
-    }
-}
-
-const player = new sprite({
+  const background = new sprite({
     position: {
-    x:100,
-    y:0
-},
-velocity: {
-    x:0,
-    y:5
-},
-offset: {
-    x:0,
-    y:0
-},
-color:'red'
-})
-
-
-const enemy = new sprite({
+      x: 0,
+      y: 0
+    },
+    imageSrc: './oak_woods_v1.0/background.png'
+  })
+  const shop = new sprite({
     position: {
-    x:900,
-    y:100
-},
+      x: 600,
+      y: 160
+    },
+    imageSrc: './oak_woods_v1.0/shop.png',
+    scale: 2.5,
+    FramesMax: 6
+  })
 
-velocity: {
-    x:0,
-    y:5
-},
-offset: {
-    x:-50,
-    y:0
-},
-color:'blue'
-})
+  const player = new Fighter({
+    position: {
+      x: 0,
+      y: 0
+    },
+    velocity: {
+      x: 0,
+      y: 0
+    },
+    offset: {
+      x: 0,
+      y: 0
+    },
+    imageSrc: './Martial Hero/Sprites/Idle.png',
+    FramesMax: 8,
+    scale: 2.5,
+    offset: {
+      x: 215,
+      y: 157
+    },
+    sprites: {
+      idle: {
+        imageSrc: './Martial Hero/Sprites/Idle.png',
+        framesMax: 8
+      },
+      run: {
+        imageSrc: './Martial Hero/Sprites/Run.png',
+        framesMax: 8
+      },
+      jump: {
+        imageSrc: './Martial Hero/Sprites/Jump.png',
+        framesMax: 2
+      },
+      fall: {
+        imageSrc: './Martial Hero/Sprites/Fall.png',
+        framesMax: 2
+      },
+      attack1: {
+        imageSrc: './Martial Hero/Sprites/Attack1.png',
+        framesMax: 6
+      },
+      takeHit: {
+        imageSrc: './Martial Hero/Sprites/Take Hit - white silhouette.png',
+        framesMax: 4
+      },
+      death: {
+        imageSrc: './Martial Hero/Sprites/Death.png',
+        framesMax: 6
+      }
+    },
+    attackBox: {
+      offset: {
+        x: 100,
+        y: 50
+      },
+      width: 160,
+      height: 50
+    }
+  })
+  
+  const enemy = new Fighter({
+    position: {
+      x: 400,
+      y: 100
+    },
+    velocity: {
+      x: 0,
+      y: 0
+    },
+    color: 'blue',
+    offset: {
+      x: -50,
+      y: 0
+    },
+    imageSrc: './Martial Hero 2/Sprites/Idle.png',
+    FramesMax: 4,
+    scale: 2.5,
+    offset: {
+      x: 215,
+      y: 167
+    },
+    sprites: {
+      idle: {
+        imageSrc: './Martial Hero 2/Sprites/Idle.png',
+        framesMax: 4
+      },
+      run: {
+        imageSrc: './Martial Hero 2/Sprites/Run.png',
+        framesMax: 8
+      },
+      jump: {
+        imageSrc: './Martial Hero 2/Sprites/Jump.png',
+        framesMax: 2
+      },
+      fall: {
+        imageSrc: './Martial Hero 2/Sprites/Fall.png',
+        framesMax: 2
+      },
+      attack1: {
+        imageSrc: './Martial Hero 2/Sprites/Attack1.png',
+        framesMax: 4
+      },
+      takeHit: {
+        imageSrc: './Martial Hero 2/Sprites/Take hit.png',
+        framesMax: 3
+      },
+      death: {
+        imageSrc: './Martial Hero 2/Sprites/Death.png',
+        framesMax: 7
+      }
+    },
+    attackBox: {
+      offset: {
+        x: -170,
+        y: 50
+      },
+      width: 170,
+      height: 50
+    }
+  })
 
 const keys = {
     a: {
@@ -116,46 +160,6 @@ const keys = {
     }
   }
 
-function collision({box1,box2}){
-    return (box1.attackbox.position.x + box1.attackbox.width >= box2.position.x
-        && box1.attackbox.position.x <= box2.position.x + box2.width
-        && box1.attackbox.position.y + box1.attackbox.height >= box2.position.y
-        && box1.attackbox.position.y <= box2.position.y + box2.height
-        )
-
-}
-
-function winner({player,enemy,timeID}){
-    clearTimeout(timeID)
-    document.querySelector('.tie').style.display = 'flex'
-    if(player.health === enemy.health){
-        console.log('tie')
-        document.querySelector('.tie').innerHTML = 'Tie'
-    }
-    else if (player.health > enemy.health){
-        document.querySelector('.tie').innerHTML = 'P1 wins'
-    }
-    else if (player.health < enemy.health){
-        document.querySelector('.tie').innerHTML = 'P2 wins'
-    }
-}
-
-
-let time = 60
-let timeID
-function timer(){
-    timeID = setTimeout(timer, 1000);
-    if( time > 0 ){
-        time = time - 1
-        document.querySelector('.timer').innerHTML = time
-    }
-
-
-
-    if(time === 0 ){
-        winner({player,enemy,timeID})
-    }
-}
 
 timer()
     
@@ -163,6 +167,10 @@ function animation(){
     window.requestAnimationFrame(animation)
     c.fillStyle = 'black'
     c.fillRect(0,0,canvas.width,canvas.height)
+    background.update()
+    shop.update()
+    c.fillStyle = 'rgba(255, 255, 255, 0.15)'
+    c.fillRect(0, 0, canvas.width, canvas.height)
     player.update()
     enemy.update()
 
@@ -285,4 +293,3 @@ window.addEventListener('keyup', (event) => {
         break
     }
   })
-  
