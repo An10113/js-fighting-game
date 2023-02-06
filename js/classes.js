@@ -129,12 +129,23 @@ class Fighter extends sprite{
       this.isAttacking = true
       this.switchSprite('attack1')
   }
+
+  takeHit(){
+    this.health += -20
+    this.switchSprite('takeHit')
+  }
+
   switchSprite(sprite) {
     if (
     this.image === this.sprites.attack1.image &&
     this.Frame < this.sprites.attack1.FramesMax - 1
     )
     return
+      if(this.image === this.sprites.attack1.image &&
+        this.Frame < this.sprites.takeHit.FramesMax - 1
+      )
+        return
+
   switch (sprite) {
 
     case 'idle':
@@ -171,6 +182,13 @@ class Fighter extends sprite{
       if (this.image !== this.sprites.attack1.image) {
         this.image = this.sprites.attack1.image
         this.FramesMax = this.sprites.attack1.FramesMax
+        this.Frame = 0
+      }
+      break
+    case 'takeHit':
+      if (this.image !== this.sprites.takeHit.image) {
+        this.image = this.sprites.takeHit.image
+        this.FramesMax = this.sprites.takeHit.FramesMax
         this.Frame = 0
       }
       break
