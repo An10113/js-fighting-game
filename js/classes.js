@@ -81,6 +81,7 @@ class Fighter extends sprite{
       this.FrameElapsed = 0
       this.FrameHold = 7
       this.sprites = sprites
+      this.dead = false
 
       for(sprite in sprites){
           sprites[sprite].image = new Image()
@@ -108,7 +109,9 @@ class Fighter extends sprite{
 
   update(){
       this.draw()
-      this.AnimationFrames()
+      if(this.dead === false){
+        this.AnimationFrames()
+      }
       this.attackbox.position.x = this.position.x + this.attackbox.offset.x
       this.attackbox.position.y = this.position.y + this.attackbox.offset.y
 
@@ -132,16 +135,27 @@ class Fighter extends sprite{
 
   takeHit(){
     this.health += -20
-    this.switchSprite('takeHit')
+    if(this.health <= 0){
+      this.switchSprite('death')
+    }
+    else{
+      this.switchSprite('takeHit')
+    }
   }
 
   switchSprite(sprite) {
+    if(this.image === this.sprites.death.image){
+      if(this.Frame === this.sprites.death.FramesMax -1)this.dead = true
+      return
+    } 
+    
+
     if (
     this.image === this.sprites.attack1.image &&
     this.Frame < this.sprites.attack1.FramesMax - 1
     )
     return
-      if(this.image === this.sprites.attack1.image &&
+      if (this.image === this.sprites.takeHit.image &&
         this.Frame < this.sprites.takeHit.FramesMax - 1
       )
         return
@@ -185,13 +199,20 @@ class Fighter extends sprite{
         this.Frame = 0
       }
       break
-    case 'takeHit':
-      if (this.image !== this.sprites.takeHit.image) {
-        this.image = this.sprites.takeHit.image
-        this.FramesMax = this.sprites.takeHit.FramesMax
-        this.Frame = 0
-      }
-      break
+      case 'takeHit':
+        if (this.image !== this.sprites.takeHit.image) {
+          this.image = this.sprites.takeHit.image
+          this.FramesMax = this.sprites.takeHit.FramesMax
+          this.Frame = 0
+        }
+        break
+        case 'death':
+          if (this.image !== this.sprites.death.image) {
+            this.image = this.sprites.death.image
+            this.FramesMax = this.sprites.death.FramesMax
+            this.Frame = 0
+          }
+          break
     }
   }
 }

@@ -11,7 +11,6 @@ function winner({player,enemy,timeID}){
   clearTimeout(timeID)
   document.querySelector('.tie').style.display = 'flex'
   if(player.health === enemy.health){
-      console.log('tie')
       document.querySelector('.tie').innerHTML = 'Tie'
   }
   else if (player.health > enemy.health){
@@ -31,8 +30,6 @@ function timer(){
       time = time - 1
       document.querySelector('.timer').innerHTML = time
   }
-
-
 
   if(time === 0 ){
       winner({player,enemy,timeID})

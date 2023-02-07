@@ -42,45 +42,45 @@ const gravity = 0.5
     scale: 2.5,
     offset: {
       x: 215,
-      y: 157
+      y: 104
     },
     sprites: {
       idle: {
         imageSrc: './Martial Hero/Sprites/Idle.png',
-        framesMax: 8
+        FramesMax: 8
       },
       run: {
         imageSrc: './Martial Hero/Sprites/Run.png',
-        framesMax: 8
+        FramesMax: 8
       },
       jump: {
         imageSrc: './Martial Hero/Sprites/Jump.png',
-        framesMax: 2
+        FramesMax: 2
       },
       fall: {
         imageSrc: './Martial Hero/Sprites/Fall.png',
-        framesMax: 2
+        FramesMax: 2
       },
       attack1: {
         imageSrc: './Martial Hero/Sprites/Attack1.png',
-        framesMax: 6
+        FramesMax: 6
       },
       takeHit: {
         imageSrc: './Martial Hero/Sprites/Take Hit - white silhouette.png',
-        framesMax: 4
+        FramesMax: 4
       },
       death: {
         imageSrc: './Martial Hero/Sprites/Death.png',
-        framesMax: 6
+        FramesMax: 6
       }
     },
-    attackBox: {
+    attackbox: {
       offset: {
         x: 100,
-        y: 50
+        y: 70
       },
-      width: 160,
-      height: 50
+      width: 150,
+      height: 120
     }
   })
   
@@ -94,54 +94,50 @@ const gravity = 0.5
       y: 0
     },
     color: 'blue',
-    offset: {
-      x: -50,
-      y: 0
-    },
     imageSrc: './Martial Hero 2/Sprites/Idle.png',
     FramesMax: 4,
-    scale: 2.5,
+    scale: 2.4,
     offset: {
       x: 215,
-      y: 167
+      y: 104
     },
     sprites: {
       idle: {
         imageSrc: './Martial Hero 2/Sprites/Idle.png',
-        framesMax: 4
+        FramesMax: 4
       },
       run: {
         imageSrc: './Martial Hero 2/Sprites/Run.png',
-        framesMax: 8
+        FramesMax: 8
       },
       jump: {
         imageSrc: './Martial Hero 2/Sprites/Jump.png',
-        framesMax: 2
+        FramesMax: 2
       },
       fall: {
         imageSrc: './Martial Hero 2/Sprites/Fall.png',
-        framesMax: 2
+        FramesMax: 2
       },
       attack1: {
         imageSrc: './Martial Hero 2/Sprites/Attack1.png',
-        framesMax: 4
+        FramesMax: 4
       },
       takeHit: {
         imageSrc: './Martial Hero 2/Sprites/Take hit.png',
-        framesMax: 3
+        FramesMax: 3
       },
       death: {
         imageSrc: './Martial Hero 2/Sprites/Death.png',
-        framesMax: 7
+        FramesMax: 7
       }
     },
-    attackBox: {
+    attackbox: {
       offset: {
-        x: -170,
-        y: 50
+        x: -190,
+        y: 70
       },
-      width: 170,
-      height: 50
+      width: 150,
+      height: 120
     }
   })
 
@@ -174,48 +170,80 @@ function animation(){
     player.update()
     enemy.update()
 
+
     player.velocity.x = 0
+    enemy.velocity.x = 0
     if (keys.a.pressed 
         && player.lastkey === 'a'
         ){
         player.velocity.x = -4
-    }
-    else if( keys.d.pressed 
+        player.switchSprite('run')
+      }
+      else if( keys.d.pressed 
         && player.lastkey === 'd'
         ){
-        player.velocity.x = 4
+          player.velocity.x = 4
+          player.switchSprite('run')
+        }else {
+          player.switchSprite('idle')
+        }
+        
+        enemy.velocity.x = 0
+        if (keys.ArrowLeft.pressed && enemy.lastkey === 'ArrowLeft'){
+          enemy.velocity.x = -4
+          enemy.switchSprite('run')
+        }
+        else if( keys.ArrowRight.pressed && enemy.lastkey === 'ArrowRight'){
+          enemy.velocity.x = 4
+          enemy.switchSprite('run')
+    }else {
+      enemy.switchSprite('idle')
     }
 
-    enemy.velocity.x = 0
-    if (keys.ArrowLeft.pressed && enemy.lastkey === 'ArrowLeft'){
-        enemy.velocity.x = -4
-    }
-    else if( keys.ArrowRight.pressed && enemy.lastkey === 'ArrowRight'){
-        enemy.velocity.x = 4
-    }
 
-
+    if (player.velocity.y < 0) {
+      player.switchSprite('jump')
+    } else if (player.velocity.y > 0) {
+      player.switchSprite('fall')
+    }
+    if (enemy.velocity.y < 0) {
+      enemy.switchSprite('jump')
+    } else if (enemy.velocity.y > 0) {
+      enemy.switchSprite('fall')
+    }
+  
     // detect collision
     if ( collision({
         box1: player,
         box2:enemy
     })
-        && player.isAttacking
+        && player.isAttacking && player.Frame === 4
         ){
-            player.isAttacking =false
-            enemy.health -= 20
-            document.querySelector("#enemyHealth").style.width = enemy.health + '%'
+          enemy.takeHit()
+          player.isAttacking =false
+          gsap.to ('#enemyHealth',{
+            width: enemy.health + '%'
+          })
         }
-    
+        if (player.isAttacking && player.Frame === 4){
+          player.isAttacking =false
+        }
         if ( collision({
         box1:enemy,
         box2:player
     })
         && enemy.isAttacking
+        && player.Frame === 2
         ){
-            enemy.isAttacking = false
-            player.health -= 20
-            document.querySelector("#playerHealth").style.width = player.health + '%'
+          player.takeHit()
+          enemy.isAttacking = false
+          gsap.to ('#playerHealth',{
+            width: player.health + '%'
+          })
+        }
+
+        if (enemy.isAttacking && enemy.Frame === 2){
+          enemy.isAttacking =false
         }
 
         // end game
@@ -230,42 +258,48 @@ animation()
 
 
 window.addEventListener('keydown',(event) => {
-        switch (event.key.toLowerCase()) {
-            case 'd':
-              keys.d.pressed = true
-              player.lastkey = 'd'
-              break
-            case 'a':
-              keys.a.pressed = true
-              player.lastkey = 'a'
-              break
-            case 'w':
-                if(player.position.y + player.height + player.velocity.y > canvas.height - 120 ){
-                    player.velocity.y = -10
-                }
-              break
+       
+  if (player.dead === false){
+    switch (event.key.toLowerCase()) {
+      case 'd':
+        keys.d.pressed = true
+        player.lastkey = 'd'
+        break
+        case 'a':
+          keys.a.pressed = true
+          player.lastkey = 'a'
+          break
+          case 'w':
+            if(player.position.y + player.height + player.velocity.y > canvas.height - 200 ){
+              player.velocity.y = -12
+            }
+            break
             case 't':
-                player.attack()
+              player.attack()
               break
+              
+            }
+    }
 
-        }
-        switch (event.key) {
-            case 'ArrowRight':
-              keys.ArrowRight.pressed = true
-              enemy.lastkey = 'ArrowRight'
-              break
-            case 'ArrowLeft':
-                keys.ArrowLeft.pressed = true
-                enemy.lastkey = 'ArrowLeft'
-              break
+    if(enemy.dead === false){
+      switch (event.key) {
+        case 'ArrowRight':
+          keys.ArrowRight.pressed = true
+          enemy.lastkey = 'ArrowRight'
+          break
+          case 'ArrowLeft':
+            keys.ArrowLeft.pressed = true
+            enemy.lastkey = 'ArrowLeft'
+            break
             case 'ArrowUp':
-                if(enemy.position.y + enemy.height + enemy.velocity.y > canvas.height - 120 ){
-                    enemy.velocity.y = -10
-                      }
+              if(enemy.position.y + enemy.height + enemy.velocity.y > canvas.height - 200 ){
+                enemy.velocity.y = -12
+              }
               break
               case 'j':
                 enemy.attack()
-              break
+                break
+              }
     }
     console.log(event.key)
 })
